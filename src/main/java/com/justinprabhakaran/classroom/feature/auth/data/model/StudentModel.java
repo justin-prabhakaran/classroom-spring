@@ -9,10 +9,16 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.*;
 
-
+@Data
 @Entity
 @Table(name="student")
 public class StudentModel extends Student {
     @Id
-    protected long registerNumber;
+    protected Long registerNumber;
+    protected String name;
+    protected String email;
+    protected String passHash;
+    protected YEAR year;
+    protected DEPARTMENT dept;
+    protected Character section;
 }

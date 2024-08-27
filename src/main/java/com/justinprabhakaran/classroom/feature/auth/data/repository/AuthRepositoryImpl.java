@@ -22,10 +22,8 @@ public class AuthRepositoryImpl  implements AuthRepository {
     }
 
     @Override
-    public Optional<Teacher> getTeacher(Long registerNumber) {
-        return Optional.empty();
+    public Optional<Teacher> getTeacher(String email,String pass) {
+        return teacherAuthDataSource.findByEmail(email).map(teacherModel -> (Teacher) teacherModel);
     }
 
-
-    //Todo: implementation needed
 }

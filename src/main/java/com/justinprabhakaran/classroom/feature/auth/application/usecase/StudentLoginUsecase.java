@@ -20,7 +20,7 @@ public class StudentLoginUsecase implements Usecase<StudentLoginParams, Student>
         if(std.isPresent()){
             return std.get();
         }
-        throw new RuntimeException("Not Found !!");
+        throw new RuntimeException("Student Not Found !!");
     }
 }
 

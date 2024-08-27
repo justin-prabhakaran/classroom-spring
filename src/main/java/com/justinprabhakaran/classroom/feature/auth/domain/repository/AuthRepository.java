@@ -14,5 +14,5 @@ import java.util.Optional;
 public interface AuthRepository {
 
     Optional<Student> getStudent(Long registerNumber,String pass);
-    Optional<Teacher> getTeacher(Long registerNumber);
+    Optional<Teacher> getTeacher(String email,String pass);
 }
