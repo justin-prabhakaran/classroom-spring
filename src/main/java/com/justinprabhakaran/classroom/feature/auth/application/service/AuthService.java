@@ -19,7 +19,12 @@ public class AuthService {
     private StudentLoginUsecase studentLoginUsecase;
     public ResponseEntity<Student> studentLogin(long regno,String pass){
         try {
-            Student student = studentLoginUsecase.execute(new StudentLoginParams(regno,pass));
+            var studentLoginParams = new StudentLoginParams();
+            studentLoginParams.setPass(pass);
+            studentLoginParams.setRegno(regno);
+
+            Student student = studentLoginUsecase.execute(studentLoginParams);
+
             return ResponseEntity.ok().body(student);
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -30,7 +35,12 @@ public class AuthService {
     private TeacherLoginUsecase teacherLoginUsecase;
     public ResponseEntity<Teacher> teacherLogin(String email,String pass){
         try {
-            Teacher teacher = teacherLoginUsecase.execute(new TeacherLoginParams(email,pass));
+            var teacherLoginParams = new TeacherLoginParams();
+            teacherLoginParams.setPass(pass);
+            teacherLoginParams.setEmail(email);
+
+            Teacher teacher = teacherLoginUsecase.execute(teacherLoginParams);
+
             return ResponseEntity.ok().body(teacher);
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();

@@ -1,11 +1,12 @@
 package com.justinprabhakaran.classroom.feature.auth.application.usecase;
 
-public class StudentLoginParams{
-    long regno;
-    String pass;
+import lombok.Getter;
+import lombok.Setter;
 
-    public StudentLoginParams(long regno, String pass) {
-        this.regno = regno;
-        this.pass = pass;
-    }
+@Getter
+@Setter
+public class StudentLoginParams{
+    private long regno;
+    private String pass;
+
 }

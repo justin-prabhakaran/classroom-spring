@@ -2,10 +2,11 @@ package com.justinprabhakaran.classroom.feature.auth.application.usecase;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
-@AllArgsConstructor
+@Setter
 public class TeacherLoginParams {
-    String email;
-    String pass;
+    private String email;
+    private String pass;
 }
