@@ -8,9 +8,10 @@ import com.justinprabhakaran.classroom.feature.auth.domain.entity.Teacher;
 import com.justinprabhakaran.classroom.feature.auth.domain.repository.AuthRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
-@Component
+@Repository
 public class AuthRepositoryImpl  implements AuthRepository {
     @Autowired
     StudentAuthDataSource studentAuthDataSource;

@@ -47,12 +47,12 @@ public class StudentModel extends Student {
         this.year = year;
     }
 
-    public DEPARTMENT getDept() {
-        return dept;
+    public DEPARTMENT getDepartment() {
+        return department;
     }
 
-    public void setDept(DEPARTMENT dept) {
-        this.dept = dept;
+    public void setDepartment(DEPARTMENT department) {
+        this.department = department;
     }
 
     public Character getSection() {

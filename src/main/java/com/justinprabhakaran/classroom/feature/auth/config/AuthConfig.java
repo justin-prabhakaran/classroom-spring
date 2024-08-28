@@ -4,11 +4,11 @@ import com.justinprabhakaran.classroom.feature.auth.data.repository.AuthReposito
 import com.justinprabhakaran.classroom.feature.auth.domain.repository.AuthRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 @Configuration
 public class AuthConfig {
-    //Todo: implementation needed
-
+    @Primary
     @Bean
     public AuthRepository authRepository(){
         return new AuthRepositoryImpl();
