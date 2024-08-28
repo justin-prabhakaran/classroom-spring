@@ -4,10 +4,13 @@ import com.justinprabhakaran.classroom.core.utils.Usecase;
 import com.justinprabhakaran.classroom.feature.auth.data.model.TeacherModel;
 import com.justinprabhakaran.classroom.feature.auth.domain.entity.Teacher;
 import com.justinprabhakaran.classroom.feature.auth.domain.repository.AuthRepository;
+import jakarta.persistence.Column;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
+@Component
 public class TeacherLoginUsecase implements Usecase<TeacherLoginParams, Teacher> {
     @Autowired
     private AuthRepository repository;

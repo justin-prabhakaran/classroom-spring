@@ -29,14 +29,14 @@ public class AuthController {
 
     @Getter
     @Setter
-   private class StudentLoginRequest {
+   static private class StudentLoginRequest {
         private long regno;
         private String pass;
     }
 
     @Getter
     @Setter
-    private class TeacherLoginRequest{
+   static private class TeacherLoginRequest{
         private String email;
         private String pass;
     }

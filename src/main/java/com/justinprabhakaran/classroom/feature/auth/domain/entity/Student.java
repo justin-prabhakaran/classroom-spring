@@ -35,11 +35,10 @@ public class Student {
     @Setter(AccessLevel.PROTECTED)
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    protected DEPARTMENT dept;
+    protected DEPARTMENT department;
 
     @Getter(AccessLevel.PROTECTED)
     @Setter(AccessLevel.PROTECTED)
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     protected Character section;
 
