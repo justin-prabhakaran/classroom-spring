@@ -9,8 +9,11 @@ import lombok.Setter;
 
 @MappedSuperclass
 public class Teacher {
+    @Getter(AccessLevel.PROTECTED)
+    @Setter(AccessLevel.PROTECTED)
     @Id
     protected long teacherId;
+
 
 
     @Getter(AccessLevel.PROTECTED)

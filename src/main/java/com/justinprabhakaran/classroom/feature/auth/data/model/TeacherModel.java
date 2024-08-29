@@ -15,6 +15,14 @@ public class TeacherModel extends Teacher {
     @Column(nullable = false)
     protected String passHash;
 
+    public long getTeacherId() {
+        return teacherId;
+    }
+
+    public void setTeacherId(long teacherId) {
+        this.teacherId = teacherId;
+    }
+
     public String getName() {
         return name;
     }
