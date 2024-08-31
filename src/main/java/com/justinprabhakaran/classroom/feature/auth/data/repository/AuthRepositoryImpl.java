@@ -24,6 +24,11 @@ public class AuthRepositoryImpl  implements AuthRepository {
     }
 
     @Override
+    public Optional<StudentModel> getStudent(String email) {
+        return studentAuthDataSource.findByEmail(email);
+    }
+
+    @Override
     public Optional<TeacherModel> getTeacher(String email) {
         return teacherAuthDataSource.findByEmail(email);
     }

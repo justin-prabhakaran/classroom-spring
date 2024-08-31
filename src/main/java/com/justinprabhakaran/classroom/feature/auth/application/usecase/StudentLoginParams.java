@@ -8,5 +8,6 @@ import lombok.Setter;
 public class StudentLoginParams{
     private long regno;
     private String pass;
+    private String email;
 
 }
