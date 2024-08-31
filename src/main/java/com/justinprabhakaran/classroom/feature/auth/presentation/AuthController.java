@@ -18,7 +18,7 @@ public class AuthController {
 
     @PostMapping("/login/student")
     public ResponseEntity<Student> login(@RequestBody StudentLoginRequest loginRequest){
-        return service.studentLogin(loginRequest.getRegno(),loginRequest.getPass());
+        return service.studentLogin(loginRequest.getRegno(),loginRequest.getPass(),loginRequest.getEmail());
     }
 
     @PostMapping("/login/teacher")
@@ -32,6 +32,7 @@ public class AuthController {
    static private class StudentLoginRequest {
         private long regno;
         private String pass;
+        private String email;
     }
 
     @Getter

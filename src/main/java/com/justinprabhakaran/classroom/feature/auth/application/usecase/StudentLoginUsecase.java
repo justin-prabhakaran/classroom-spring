@@ -16,7 +16,14 @@ public class StudentLoginUsecase implements Usecase<StudentLoginParams, Student>
 
     @Override
     public Student execute(StudentLoginParams args) {
-        Optional<StudentModel> std = authRepository.getStudent(args.getRegno());
+        Optional<StudentModel> std ;
+
+        if(args.getRegno()!=0){
+            std = authRepository.getStudent(args.getRegno());
+        }
+        else{
+            std = authRepository.getStudent(args.getEmail());
+        }
 
         if(std.isPresent()){
             var student = std.get();

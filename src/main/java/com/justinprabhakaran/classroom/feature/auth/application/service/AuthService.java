@@ -17,11 +17,12 @@ public class AuthService {
 
     @Autowired
     private StudentLoginUsecase studentLoginUsecase;
-    public ResponseEntity<Student> studentLogin(long regno,String pass){
+    public ResponseEntity<Student> studentLogin(long regno,String pass,String email){
         try {
             var studentLoginParams = new StudentLoginParams();
             studentLoginParams.setPass(pass);
             studentLoginParams.setRegno(regno);
+            studentLoginParams.setEmail(email);
 
             Student student = studentLoginUsecase.execute(studentLoginParams);
 
