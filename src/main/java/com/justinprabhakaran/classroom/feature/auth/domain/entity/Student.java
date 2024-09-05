@@ -1,6 +1,7 @@
 package com.justinprabhakaran.classroom.feature.auth.domain.entity;
 
 import com.justinprabhakaran.classroom.core.utils.DEPARTMENT;
+import com.justinprabhakaran.classroom.core.utils.SROLE;
 import com.justinprabhakaran.classroom.core.utils.YEAR;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -41,6 +42,19 @@ public class Student {
     @Setter(AccessLevel.PROTECTED)
     @Column(nullable = false)
     protected Character section;
+
+
+    @Column(nullable = false)
+    @Getter(AccessLevel.PROTECTED)
+    @Setter(AccessLevel.PROTECTED)
+    protected String passHash;
+
+
+    @Column(nullable = false)
+    @Getter(AccessLevel.PROTECTED)
+    @Setter(AccessLevel.PROTECTED)
+    @Enumerated(EnumType.STRING)
+    protected SROLE securityRole;
 
 
 }

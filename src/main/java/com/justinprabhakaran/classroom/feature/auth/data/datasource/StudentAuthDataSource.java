@@ -12,5 +12,8 @@ public interface StudentAuthDataSource extends JpaRepository<StudentModel,Long> 
     
     @Query("SELECT s FROM StudentModel s WHERE s.email = :email")
     Optional<StudentModel> findByEmail(@Param("email") String email);
+
+//    @Query("SELECT s FROM StudentModel s WHERE s.name = :name")
+//    Optional<StudentModel> findByName(@Param("name") String name);
     
 }

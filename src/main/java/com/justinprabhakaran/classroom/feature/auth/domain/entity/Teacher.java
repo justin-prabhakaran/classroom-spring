@@ -2,6 +2,7 @@ package com.justinprabhakaran.classroom.feature.auth.domain.entity;
 
 import com.justinprabhakaran.classroom.core.utils.DEPARTMENT;
 import com.justinprabhakaran.classroom.core.utils.ROLE;
+import com.justinprabhakaran.classroom.core.utils.SROLE;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -13,8 +14,6 @@ public class Teacher {
     @Setter(AccessLevel.PROTECTED)
     @Id
     protected long teacherId;
-
-
 
     @Getter(AccessLevel.PROTECTED)
     @Setter(AccessLevel.PROTECTED)
@@ -37,6 +36,20 @@ public class Teacher {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     protected ROLE role;
+
+
+    @Getter(AccessLevel.PROTECTED)
+    @Setter(AccessLevel.PROTECTED)
+    @Column(nullable = false)
+    protected String passHash;
+
+
+    @Getter(AccessLevel.PROTECTED)
+    @Setter(AccessLevel.PROTECTED)
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    protected SROLE securityRole;
+
 
 
 }
