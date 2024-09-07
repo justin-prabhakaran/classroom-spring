@@ -10,6 +10,7 @@ import com.justinprabhakaran.classroom.feature.auth.domain.entity.Student;
 import com.justinprabhakaran.classroom.feature.auth.domain.entity.Teacher;
 import com.justinprabhakaran.classroom.feature.auth.presentation.dto.StudentLoginResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 public class AuthService {
 
     @Autowired
+    @Lazy
     AuthenticationManager authenticationManager;
 
     @Autowired
@@ -45,21 +47,20 @@ public class AuthService {
             if(regno != 0){
                 Authentication authentication = authenticationManager.authenticate(
                         new UsernamePasswordAuthenticationToken(
-                                regno,
+                                Long.toString(regno),
                                 pass
                         )
                 );
 
                 if(authentication.isAuthenticated()){
-                    String jwt = jwtService.generateToken(userDetailsService.loadUserByUsername(
+                    String jwt = jwtService.generateToken(userDetailsService.loadUserByRegNo(
                             Long.toString(regno)
                     ));
                     response.setJwt(jwt);
                 }
                 else return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed !!");
             }else if(!email.isEmpty()){
-
-
+                System.out.println(email);
                 Authentication authentication = authenticationManager.authenticate(
                         new UsernamePasswordAuthenticationToken(
                                 email,
@@ -67,7 +68,7 @@ public class AuthService {
                         )
                 );
                 if(authentication.isAuthenticated()){
-                    String jwt = jwtService.generateToken(userDetailsService.loadUserByUsername(email));
+                    String jwt = jwtService.generateToken(userDetailsService.loadUserByEmailStudent(email));
                     response.setJwt(jwt);
                 }
             }else return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Empty Request idiot !!!");

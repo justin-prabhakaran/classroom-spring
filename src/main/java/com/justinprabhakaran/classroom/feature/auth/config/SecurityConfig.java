@@ -3,6 +3,7 @@ import com.justinprabhakaran.classroom.feature.auth.application.service.MyUserDe
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
@@ -22,6 +23,9 @@ public class SecurityConfig {
     @Autowired
     MyUserDetailsService userDetailsService;
 
+    @Autowired @Lazy
+    CustomAuthenticationProvider customAuthenticationProvider;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity.csrf(AbstractHttpConfigurer::disable)
@@ -32,7 +36,9 @@ public class SecurityConfig {
                             registory.requestMatchers("/api/v1/teacher").hasRole("TEACHER");
                             registory.anyRequest().authenticated();
                         }
-                ).build();
+                )
+                .authenticationProvider(customAuthenticationProvider)
+                .build();
     }
 
     @Bean
@@ -40,17 +46,17 @@ public class SecurityConfig {
         return userDetailsService;
     }
 
-    @Bean
-    public AuthenticationProvider authenticationProvider(){
-        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-        authenticationProvider.setUserDetailsService(userDetailsService);
-        authenticationProvider.setPasswordEncoder( passwordEncoder() );
-
-        return authenticationProvider;
-    }
+//    @Bean
+//    public AuthenticationProvider authenticationProvider(){
+//        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+//        authenticationProvider.setUserDetailsService(userDetailsService);
+//        authenticationProvider.setPasswordEncoder( passwordEncoder() );
+//
+//        return authenticationProvider;
+//    }
 
     @Bean AuthenticationManager authenticationManager(){
-        return new ProviderManager(authenticationProvider());
+        return new ProviderManager(customAuthenticationProvider);
     }
 
     @Bean
