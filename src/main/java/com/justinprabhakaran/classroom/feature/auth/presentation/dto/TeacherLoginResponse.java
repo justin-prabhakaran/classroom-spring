@@ -4,8 +4,10 @@ import com.justinprabhakaran.classroom.core.utils.DEPARTMENT;
 import com.justinprabhakaran.classroom.core.utils.ROLE;
 import com.justinprabhakaran.classroom.core.utils.SROLE;
 
+import lombok.Getter;
 import lombok.Setter;
 
+@Getter
 @Setter
 public class TeacherLoginResponse {
 

@@ -6,6 +6,7 @@ import com.justinprabhakaran.classroom.feature.auth.domain.entity.Teacher;
 import com.justinprabhakaran.classroom.feature.auth.domain.repository.AuthRepository;
 import jakarta.persistence.Column;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -15,15 +16,17 @@ public class TeacherLoginUsecase implements Usecase<TeacherLoginParams, Teacher>
     @Autowired
     private AuthRepository repository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Override
-    public Teacher execute(TeacherLoginParams args) {
+    public TeacherModel execute(TeacherLoginParams args) {
         Optional<TeacherModel> teacherModel =  repository.getTeacher(args.getEmail());
         if(teacherModel.isPresent()){
            var teacher = teacherModel.get();
 
-           if(teacher.getPassHash().equals(args.getPass()))
-               return teacher;
-           else throw new RuntimeException("Invalid Register Number/Password !!");
+           if(passwordEncoder.matches(args.getPass(),teacher.getPassHash())) return teacher;
+           else throw new RuntimeException("Invalid Register Number/Email Or Password !!");
         }
         throw new RuntimeException("Teacher Not Found!!");
     }

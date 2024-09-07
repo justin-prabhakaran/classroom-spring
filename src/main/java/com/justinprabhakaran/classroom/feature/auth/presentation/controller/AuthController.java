@@ -32,7 +32,7 @@ public class AuthController {
     }
 
     @PostMapping("/login/teacher")
-    public ResponseEntity<Teacher> login(@RequestBody TeacherLoginRequest loginRequest){
+    public ResponseEntity<?> login(@RequestBody TeacherLoginRequest loginRequest){
         return service.teacherLogin(loginRequest.getEmail(),loginRequest.getPass());
     }
 

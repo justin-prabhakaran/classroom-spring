@@ -8,7 +8,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -28,9 +28,14 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         UserDetails userDetails;
         if(isRegNo(username)){
             userDetails = userDetailsService.loadUserByRegNo(username);
-        }else {
-            userDetails = userDetailsService.loadUserByEmailStudent(username);
-        }
+        }else if(username.contains("@")) {
+            try {
+                userDetails = userDetailsService.loadUserByEmailStudent(username);
+            }
+            catch (UsernameNotFoundException e){
+                userDetails = userDetailsService.loadUserByEmailTeacher(username);
+            }
+        }else throw new BadCredentialsException("Invalid Credentials !!");
 
         if(passwordEncoder.matches(password,userDetails.getPassword())){
             return new UsernamePasswordAuthenticationToken(userDetailsService,password,userDetails.getAuthorities());
