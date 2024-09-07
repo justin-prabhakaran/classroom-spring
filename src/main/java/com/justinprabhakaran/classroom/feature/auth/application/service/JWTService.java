@@ -1,5 +1,6 @@
 package com.justinprabhakaran.classroom.feature.auth.application.service;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,6 +10,8 @@ import javax.crypto.SecretKey;
 import java.time.Instant;
 import java.util.Base64;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -30,5 +33,23 @@ public class JWTService {
     private SecretKey generateSecretKey(){
        var key = Base64.getDecoder().decode(SECRET);
         return Keys.hmacShaKeyFor(key);
+    }
+
+
+    private Claims getClaims(String jwt){
+        return  Jwts.parser()
+                .verifyWith(generateSecretKey())
+                .build()
+                .parseSignedClaims(jwt)
+                .getPayload();
+    }
+    public String extractUsername(String jwt){
+        Claims claims = getClaims(jwt);
+        return claims.getSubject();
+    }
+
+    public boolean isTokenValid(String jwt){
+        Claims claims = getClaims(jwt);
+        return claims.getExpiration().after(Date.from(Instant.now()));
     }
 }
