@@ -3,6 +3,7 @@ package com.justinprabhakaran.classroom.feature.auth.data.model;
 
 import com.justinprabhakaran.classroom.core.utils.DEPARTMENT;
 import com.justinprabhakaran.classroom.core.utils.ROLE;
+import com.justinprabhakaran.classroom.core.utils.SROLE;
 import com.justinprabhakaran.classroom.feature.auth.domain.entity.Teacher;
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,8 +13,6 @@ import lombok.*;
 @Entity
 @Table(name = "teacher")
 public class TeacherModel extends Teacher {
-    @Column(nullable = false)
-    protected String passHash;
 
     public long getTeacherId() {
         return teacherId;
@@ -53,5 +52,21 @@ public class TeacherModel extends Teacher {
 
     public void setRole(ROLE role) {
         this.role = role;
+    }
+
+    public String getPassHash() {
+        return passHash;
+    }
+
+    public void setPassHash(String passHash) {
+        this.passHash = passHash;
+    }
+
+    public SROLE getSecurityRole() {
+        return securityRole;
+    }
+
+    public void setSecurityRole(SROLE securityRole) {
+        this.securityRole = securityRole;
     }
 }

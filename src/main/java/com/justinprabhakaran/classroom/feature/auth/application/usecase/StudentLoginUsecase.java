@@ -5,17 +5,21 @@ import com.justinprabhakaran.classroom.feature.auth.data.model.StudentModel;
 import com.justinprabhakaran.classroom.feature.auth.domain.entity.Student;
 import com.justinprabhakaran.classroom.feature.auth.domain.repository.AuthRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
 @Component
-public class StudentLoginUsecase implements Usecase<StudentLoginParams, Student> {
+public class StudentLoginUsecase implements Usecase<StudentLoginParams, StudentModel> {
     @Autowired
     private AuthRepository authRepository;
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
     @Override
-    public Student execute(StudentLoginParams args) {
+    public StudentModel execute(StudentLoginParams args) {
         Optional<StudentModel> std ;
 
         if(args.getRegno()!=0){
@@ -27,10 +31,11 @@ public class StudentLoginUsecase implements Usecase<StudentLoginParams, Student>
 
         if(std.isPresent()){
             var student = std.get();
-
-            if(student.getPassHash().equals(args.getPass()))
-                return student;
+            System.out.println(student.getPassHash() + "   " + args.getPass());
+            if(passwordEncoder.matches(args.getPass(),student.getPassHash())) return student;
             else throw new RuntimeException("Invalid Register Number/Email Or Password !!");
+
+//            return student;
         }
         throw new RuntimeException("Student Not Found !!");
     }
