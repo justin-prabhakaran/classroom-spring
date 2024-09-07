@@ -79,7 +79,7 @@ public class AuthService {
             response.setSection(student.getSection());
             response.setYear(student.getYear());
             response.setRegisterNumber(student.getRegisterNumber());
-
+            response.setSecurityRole(student.getSecurityRole());
 
             return ResponseEntity.ok().body(response);
         }catch (Exception e){
