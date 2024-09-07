@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class MyUserDetailsService  implements UserDetailsService {
+public class MyUserDetailsService implements UserDetailsService  {
     @Autowired
     StudentAuthDataSource studentAuthDataSource;
 
@@ -23,19 +23,8 @@ public class MyUserDetailsService  implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<StudentModel> student = studentAuthDataSource.findById(Long.parseLong(username));
-        if(student.isPresent()){
-            StudentModel studentModel = student.get();
-            return User.builder()
-                    .username(studentModel.getRegisterNumber().toString())
-                    .password(studentModel.getPassHash())
-                    .roles(studentModel.getSecurityRole().toString())
-                    .build();
-
-        }else{
-            throw new UsernameNotFoundException("RegisterNumber Not found !!" );
-        }
-
+        //let it be empty
+       return null;
     }
 
     public UserDetails loadUserByEmailStudent(String email) throws UsernameNotFoundException{
