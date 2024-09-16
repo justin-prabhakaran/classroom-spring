@@ -6,6 +6,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.annotation.AccessType;
@@ -17,8 +18,11 @@ import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.Enumeration;
 
+@Slf4j
 @Configuration
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -31,6 +35,26 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         System.out.println(request.getParameterMap().toString());
+
+        log.info("Request Method type  : {}", request.getMethod());
+        log.info("Request Protocol     : {}", request.getProtocol());
+        log.info("Request URL          : {}", request.getRequestURL());
+//
+//        BufferedReader br = request.getReader();
+//        String l;
+//
+//        log.info("Request Parameters : ");
+//        while((l = br.readLine())!=null){
+//            log.info(l);
+//        }
+
+        Enumeration<String> headerNames = request.getHeaderNames();
+        while(headerNames.hasMoreElements()){
+            String headerName = headerNames.nextElement();
+            String headerValue = request.getHeader(headerName);
+            log.info("{} : {}", headerName, headerValue);
+        }
+
         String authHeader = request.getHeader("Authorization");
         if(authHeader == null || !authHeader.startsWith("Bearer ")){
             filterChain.doFilter(request,response);
@@ -52,7 +76,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }else{
                 userDetails = userDetailsService.loadUserByRegNo(username);
             }
-
 
             if(userDetails != null && jwtService.isTokenValid(jwt)){
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(

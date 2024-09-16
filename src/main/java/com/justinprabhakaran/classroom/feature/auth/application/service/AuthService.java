@@ -11,6 +11,7 @@ import com.justinprabhakaran.classroom.feature.auth.domain.entity.Student;
 import com.justinprabhakaran.classroom.feature.auth.domain.entity.Teacher;
 import com.justinprabhakaran.classroom.feature.auth.presentation.dto.StudentLoginResponse;
 import com.justinprabhakaran.classroom.feature.auth.presentation.dto.TeacherLoginResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class AuthService {
 
     @Autowired
@@ -42,14 +44,16 @@ public class AuthService {
     private StudentLoginUsecase studentLoginUsecase;
     public ResponseEntity<?> studentLogin(long regno,String pass,String email){
         try {
+            log.info("studentLogin service called ");
             var studentLoginParams = new StudentLoginParams();
             studentLoginParams.setPass(pass);
             studentLoginParams.setRegno(regno);
             studentLoginParams.setEmail(email);
-
+            log.debug("RequestBody Parameters passed to StudentLoginParams class successfully.");
             StudentModel student = studentLoginUsecase.execute(studentLoginParams);
 
             StudentLoginResponse response = new StudentLoginResponse();
+
             if(regno != 0){
                 Authentication authentication = authenticationManager.authenticate(
                         new UsernamePasswordAuthenticationToken(
@@ -59,14 +63,18 @@ public class AuthService {
                 );
 
                 if(authentication.isAuthenticated()){
+                    log.info("Authentication Success.");
                     String jwt = jwtService.generateToken(userDetailsService.loadUserByRegNo(
                             Long.toString(regno)
                     ));
+                    log.info("Jwt Generated.");
                     response.setJwt(jwt);
                 }
-                else return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed !!");
+                else{
+                    log.error("Authentication Failed..");
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed !!");
+                }
             }else if(!email.isEmpty()){
-                System.out.println(email);
                 Authentication authentication = authenticationManager.authenticate(
                         new UsernamePasswordAuthenticationToken(
                                 email,
@@ -74,11 +82,19 @@ public class AuthService {
                         )
                 );
                 if(authentication.isAuthenticated()){
+                    log.info("Authentication Success.");
                     String jwt = jwtService.generateToken(userDetailsService.loadUserByEmailStudent(email));
+                    log.info("Jwt Generated.");
                     response.setJwt(jwt);
                 }
-                else return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed !!");
-            }else return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Empty Request idiot !!!");
+                else{
+                    log.error("Authentication Failed..");
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed !!");
+                }
+            }else{
+                log.error("Empty Request..");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Empty Request !!!");
+            }
 
             response.setName(student.getName());
             response.setEmail(student.getEmail());
@@ -89,8 +105,10 @@ public class AuthService {
             response.setRegisterNumber(student.getRegisterNumber());
             response.setSecurityRole(student.getSecurityRole());
 
+            log.info("studentLogin Response generated successfully..");
             return ResponseEntity.ok().body(response);
         }catch (Exception e){
+            log.error("Error : {}", String.valueOf(e));
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.toString());
         }
 
@@ -98,10 +116,11 @@ public class AuthService {
 
     public ResponseEntity<?> teacherLogin(String email,String pass){
         try {
+            log.info("teacherLogin service called : {}", email);
             var teacherLoginParams = new TeacherLoginParams();
             teacherLoginParams.setPass(pass);
             teacherLoginParams.setEmail(email);
-
+            log.debug("RequestBody Parameters passed to StudentLoginParams class successfully.");
             TeacherModel teacher = teacherLoginUsecase.execute(teacherLoginParams);
 
             TeacherLoginResponse response = new TeacherLoginResponse();
@@ -113,10 +132,14 @@ public class AuthService {
                     )
             );
             if(authentication.isAuthenticated()){
+                log.info("Authentication Success.");
                 String jwt = jwtService.generateToken(userDetailsService.loadUserByEmailTeacher(email));
                 response.setJwt(jwt);
             }
-            else return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed !!");
+            else{
+                log.error("Authentication Failed..");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed !!");
+            }
 
             response.setTeacherId(teacher.getTeacherId());
             response.setEmail(teacher.getEmail());
@@ -124,11 +147,11 @@ public class AuthService {
             response.setDepartment(teacher.getDepartment());
             response.setRole(teacher.getRole());
             response.setSecurityRole(teacher.getSecurityRole());
+            log.info("treacherLogin Response generated successfully..");
             return ResponseEntity.ok().body(response);
         }catch (Exception e){
+            log.error("Error : {}", String.valueOf(e));
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.toString());
         }
     }
-
-
 }

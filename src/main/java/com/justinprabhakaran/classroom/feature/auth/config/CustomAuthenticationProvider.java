@@ -1,6 +1,7 @@
 package com.justinprabhakaran.classroom.feature.auth.config;
 
 import com.justinprabhakaran.classroom.feature.auth.application.service.MyUserDetailsService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -11,7 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-
+@Slf4j
 @Component
 public class CustomAuthenticationProvider implements AuthenticationProvider {
     @Autowired
@@ -25,6 +26,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         String username = authentication.getName();
         String password = authentication.getCredentials().toString();
 
+        log.debug("Authentication processing..");
         UserDetails userDetails;
         if(isRegNo(username)){
             userDetails = userDetailsService.loadUserByRegNo(username);
@@ -33,13 +35,20 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
                 userDetails = userDetailsService.loadUserByEmailStudent(username);
             }
             catch (UsernameNotFoundException e){
+
                 userDetails = userDetailsService.loadUserByEmailTeacher(username);
             }
-        }else throw new BadCredentialsException("Invalid Credentials !!");
+        }else{
+            log.error("Invalid Credentials..");
+            throw new BadCredentialsException("Invalid Credentials !!");
+        }
 
         if(passwordEncoder.matches(password,userDetails.getPassword())){
             return new UsernamePasswordAuthenticationToken(userDetailsService,password,userDetails.getAuthorities());
-        }else throw new BadCredentialsException("Invalid Credentials !!");
+        }else{
+            log.error("Invalid Credentials..");
+            throw new BadCredentialsException("Invalid Credentials !!");
+        }
     }
 
     @Override
@@ -47,8 +56,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         return UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication);
     }
 
-
     private boolean isRegNo(String str) {
+        log.debug("Checking RegisterNumber is valid or not!");
         return str.startsWith("953");
     }
 }
