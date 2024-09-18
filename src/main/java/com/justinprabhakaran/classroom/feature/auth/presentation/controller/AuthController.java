@@ -1,23 +1,17 @@
 package com.justinprabhakaran.classroom.feature.auth.presentation.controller;
 
 import com.justinprabhakaran.classroom.feature.auth.application.service.AuthService;
-import com.justinprabhakaran.classroom.feature.auth.application.service.JWTService;
-import com.justinprabhakaran.classroom.feature.auth.application.service.MyUserDetailsService;
-import com.justinprabhakaran.classroom.feature.auth.domain.entity.Student;
-import com.justinprabhakaran.classroom.feature.auth.domain.entity.Teacher;
-import com.justinprabhakaran.classroom.feature.auth.presentation.dto.StudentLoginResponse;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1")
+@Slf4j
 public class AuthController {
 
 
@@ -26,13 +20,20 @@ public class AuthController {
 
     @PostMapping("/login/student")
     public ResponseEntity<?> login(@RequestBody StudentLoginRequest loginRequest){
-        System.out.println(loginRequest.regno);
+        if(loginRequest.getRegno()!=0)
+            log.debug("/login/student endpoint called with Regno : "+loginRequest.getRegno()+" and Password : "+loginRequest.getPass());
+        else
+            log.debug("/login/student endpoint called with Email : "+loginRequest.getEmail()+" and Password : "+loginRequest.getPass());
+
         return service.studentLogin(loginRequest.getRegno(),loginRequest.getPass(),loginRequest.getEmail());
 
     }
 
     @PostMapping("/login/teacher")
     public ResponseEntity<?> login(@RequestBody TeacherLoginRequest loginRequest){
+
+        log.debug("/login/teacher endpoint called. ");
+
         return service.teacherLogin(loginRequest.getEmail(),loginRequest.getPass());
     }
 
@@ -42,16 +43,21 @@ public class AuthController {
     }
 
     @GetMapping("/home/admin")
-    public ResponseEntity<?> getAdmin(){
+    public ResponseEntity<?> getAdmin() {
+        log.debug("/home/admin endpoint called.");
         return ResponseEntity.ok("welcome admin !!!");
     }
 
     @GetMapping("/home")
     public ResponseEntity<?> getHome(){
+        log.debug("/home/admin endpoint called.");
         return ResponseEntity.ok("welcome home !!!");
     }
 
-
+    @GetMapping("/me")
+    public ResponseEntity<?> getMe(Authentication authentication){
+       return service.getCurrentUser(authentication);
+    }
 
     @Getter
     @Setter

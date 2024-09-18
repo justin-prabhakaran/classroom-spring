@@ -1,13 +1,12 @@
 package com.justinprabhakaran.classroom.feature.auth.config;
 import com.justinprabhakaran.classroom.feature.auth.application.service.MyUserDetailsService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -16,7 +15,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+@Slf4j
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -30,10 +33,24 @@ public class SecurityConfig {
     @Autowired
      JwtAuthenticationFilter jwtAuthenticationFilter;
 
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+       return new WebMvcConfigurer() {
+           @Override
+           public void addCorsMappings(CorsRegistry registry) {
+               registry.addMapping("/**").allowedOrigins("*");
+           }
+       };
+    }
+
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity.csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(
+        log.info("SecurityFilterChain Executed..");
+        httpSecurity.csrf(AbstractHttpConfigurer::disable);
+        httpSecurity.cors(httpSecurityCorsConfigurer -> {});
+        httpSecurity.authorizeHttpRequests(
                         registory ->{
                             registory.requestMatchers("/api/v1/login/**").permitAll();
                             registory.requestMatchers("/api/v1/home/admin").hasRole("ADMIN");
@@ -42,8 +59,9 @@ public class SecurityConfig {
                         }
                 )
                 .authenticationProvider(customAuthenticationProvider)
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .build();
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return httpSecurity.build();
     }
 
     @Bean
@@ -66,7 +84,8 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder(){
-        System.out.println(new BCryptPasswordEncoder().encode("bhuvi"));
+//        System.out.println(new BCryptPasswordEncoder().encode("bhuvi"));
+        log.info("Password Encoded : {}", new BCryptPasswordEncoder().encode("bhuvi"));
         return new BCryptPasswordEncoder();
     }
 }
