@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -38,7 +39,6 @@ public class AuthController {
 
     @GetMapping("/teacher")
     public ResponseEntity<?> getTeacher(){
-        log.debug("/teacher called.");
         return ResponseEntity.ok("welcome teacher !!!");
     }
 
@@ -54,7 +54,10 @@ public class AuthController {
         return ResponseEntity.ok("welcome home !!!");
     }
 
-
+    @GetMapping("/me")
+    public ResponseEntity<?> getMe(Authentication authentication){
+       return service.getCurrentUser(authentication);
+    }
 
     @Getter
     @Setter
