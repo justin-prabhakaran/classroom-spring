@@ -1,18 +1,10 @@
 package com.justinprabhakaran.classroom.feature.auth.presentation.controller;
 
 import com.justinprabhakaran.classroom.feature.auth.application.service.AuthService;
-import com.justinprabhakaran.classroom.feature.auth.application.service.JWTService;
-import com.justinprabhakaran.classroom.feature.auth.application.service.MyUserDetailsService;
-import com.justinprabhakaran.classroom.feature.auth.domain.entity.Student;
-import com.justinprabhakaran.classroom.feature.auth.domain.entity.Teacher;
-import com.justinprabhakaran.classroom.feature.auth.presentation.dto.StudentLoginResponse;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,7 +43,10 @@ public class AuthController {
         return ResponseEntity.ok("welcome home !!!");
     }
 
-
+    @GetMapping("/me")
+    public ResponseEntity<?> getMe(Authentication authentication){
+       return service.getCurrentUser(authentication);
+    }
 
     @Getter
     @Setter

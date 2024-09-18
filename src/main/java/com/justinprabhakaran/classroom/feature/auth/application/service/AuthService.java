@@ -1,14 +1,8 @@
 package com.justinprabhakaran.classroom.feature.auth.application.service;
 
-import ch.qos.logback.core.encoder.EchoEncoder;
-import com.justinprabhakaran.classroom.feature.auth.application.usecase.StudentLoginParams;
-import com.justinprabhakaran.classroom.feature.auth.application.usecase.StudentLoginUsecase;
-import com.justinprabhakaran.classroom.feature.auth.application.usecase.TeacherLoginParams;
-import com.justinprabhakaran.classroom.feature.auth.application.usecase.TeacherLoginUsecase;
+import com.justinprabhakaran.classroom.feature.auth.application.usecase.*;
 import com.justinprabhakaran.classroom.feature.auth.data.model.StudentModel;
 import com.justinprabhakaran.classroom.feature.auth.data.model.TeacherModel;
-import com.justinprabhakaran.classroom.feature.auth.domain.entity.Student;
-import com.justinprabhakaran.classroom.feature.auth.domain.entity.Teacher;
 import com.justinprabhakaran.classroom.feature.auth.presentation.dto.StudentLoginResponse;
 import com.justinprabhakaran.classroom.feature.auth.presentation.dto.TeacherLoginResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -37,9 +32,15 @@ public class AuthService {
     @Autowired
     private TeacherLoginUsecase teacherLoginUsecase;
 
-
     @Autowired
     private StudentLoginUsecase studentLoginUsecase;
+
+    @Autowired
+    private GetStudentWithUsernameUsecase getStudentWithUsernameUsecase;
+
+    @Autowired
+    private GetTeacherWithUsernameUsecase getTeacherWithUsernameUsecase;
+
     public ResponseEntity<?> studentLogin(long regno,String pass,String email){
         try {
             var studentLoginParams = new StudentLoginParams();
@@ -127,6 +128,26 @@ public class AuthService {
             return ResponseEntity.ok().body(response);
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.toString());
+        }
+    }
+
+    public ResponseEntity<?> getCurrentUser(Authentication authentication){
+        String username = authentication.getPrincipal().toString();
+
+        try{
+            StudentModel studentModel = getStudentWithUsernameUsecase.execute(new GetStudentWithUsernameParams(username));
+            return ResponseEntity.ok().body(studentModel);
+        }catch (UsernameNotFoundException e) {
+            try {
+
+                TeacherModel teacherModel = getTeacherWithUsernameUsecase.execute(new GetTeacherWithUsernameParams(username));
+                return ResponseEntity.ok().body(teacherModel);
+            }
+            catch (UsernameNotFoundException e1){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e);
         }
     }
 

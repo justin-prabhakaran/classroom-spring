@@ -16,6 +16,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableWebSecurity
@@ -24,16 +27,31 @@ public class SecurityConfig {
     @Autowired
     MyUserDetailsService userDetailsService;
 
-    @Autowired @Lazy
+    @Autowired
+    @Lazy
     CustomAuthenticationProvider customAuthenticationProvider;
 
     @Autowired
      JwtAuthenticationFilter jwtAuthenticationFilter;
 
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+       return new WebMvcConfigurer() {
+           @Override
+           public void addCorsMappings(CorsRegistry registry) {
+               registry.addMapping("/**").allowedOrigins("*");
+           }
+       };
+    }
+
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity.csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(
+        httpSecurity.csrf(AbstractHttpConfigurer::disable);
+
+        httpSecurity.cors(httpSecurityCorsConfigurer -> {});
+        httpSecurity.authorizeHttpRequests(
                         registory ->{
                             registory.requestMatchers("/api/v1/login/**").permitAll();
                             registory.requestMatchers("/api/v1/home/admin").hasRole("ADMIN");
@@ -42,8 +60,9 @@ public class SecurityConfig {
                         }
                 )
                 .authenticationProvider(customAuthenticationProvider)
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .build();
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return httpSecurity.build();
     }
 
     @Bean
