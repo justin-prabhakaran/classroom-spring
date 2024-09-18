@@ -136,12 +136,18 @@ public class AuthService {
 
         try{
             StudentModel studentModel = getStudentWithUsernameUsecase.execute(new GetStudentWithUsernameParams(username));
-            return ResponseEntity.ok().body(studentModel);
+
+            StudentLoginResponse studentLoginResponse = getStudentResponse(studentModel);
+
+            return ResponseEntity.ok().body(studentLoginResponse);
         }catch (UsernameNotFoundException e) {
             try {
 
                 TeacherModel teacherModel = getTeacherWithUsernameUsecase.execute(new GetTeacherWithUsernameParams(username));
-                return ResponseEntity.ok().body(teacherModel);
+
+                TeacherLoginResponse teacherLoginResponse = getTeacherResponse(teacherModel);
+
+                return ResponseEntity.ok().body(teacherLoginResponse);
             }
             catch (UsernameNotFoundException e1){
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -149,6 +155,31 @@ public class AuthService {
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e);
         }
+    }
+
+
+    private StudentLoginResponse getStudentResponse(StudentModel studentModel){
+        StudentLoginResponse response = new StudentLoginResponse();
+        response.setName(studentModel.getName());
+        response.setSection(studentModel.getSection());
+        response.setYear(studentModel.getYear());
+        response.setEmail(studentModel.getEmail());
+        response.setDepartment(studentModel.getDepartment());
+        response.setRegisterNumber(studentModel.getRegisterNumber());
+        response.setSecurityRole(studentModel.getSecurityRole());
+        return response;
+    }
+
+    private  TeacherLoginResponse getTeacherResponse(TeacherModel teacherModel){
+        TeacherLoginResponse response = new TeacherLoginResponse();
+        response.setTeacherId(teacherModel.getTeacherId());
+        response.setName(teacherModel.getName());
+        response.setEmail(teacherModel.getEmail());
+        response.setRole(teacherModel.getRole());
+        response.setSecurityRole(teacherModel.getSecurityRole());
+        response.setDepartment(teacherModel.getDepartment());
+
+        return response;
     }
 
 
