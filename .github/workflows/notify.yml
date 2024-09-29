@@ -1,0 +1,18 @@
+name: Notify Classroom Repository
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Classroom Update
+        run: |
+          curl -X POST \
+            -H "Authorization: token ${{ secrets.PAT }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/justin-prabhakaran/aaaclass/dispatches \
+            -d '{"event_type": "update", "client_payload": {"module": "backend", "sha": "${{ github.sha }}"}}'
